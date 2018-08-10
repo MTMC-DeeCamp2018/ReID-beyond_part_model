@@ -9,7 +9,7 @@ from .TrainSet import TrainSet
 from .TestSet import TestSet
 
 # TODO
-DATASET_DIR = "../Dataset"
+DATASET_DIR = "/mnt/md1/lztao/deecamp/Dataset"
 
 
 def create_dataset(
@@ -27,24 +27,24 @@ def create_dataset(
   ########################################
 
   if name == 'market1501':
-    im_dir = ospeu(ospj(DATASET_DIR, 'market1501/images'))
-    partition_file = ospeu(ospj(DATASET_DIR, 'market1501/partitions.pkl'))
+    im_dir = ospj(DATASET_DIR, 'market1501/images')
+    partition_file = ospj(DATASET_DIR, 'market1501/partitions.pkl')
 
   elif name == 'cuhk03':  # TODO not used
     im_type = ['detected', 'labeled'][0]
-    im_dir = ospeu(ospj('~/Dataset/cuhk03', im_type, 'images'))
-    partition_file = ospeu(ospj('~/Dataset/cuhk03', im_type, 'partitions.pkl'))
+    im_dir = ospj(DATASET_DIR, 'cuhk03', im_type, 'images')
+    partition_file = ospj(DATASET_DIR, 'cuhk03', im_type, 'partitions.pkl')
 
   elif name == 'duke':
-    im_dir = ospeu(ospj(DATASET_DIR, 'duke/images'))
-    partition_file = ospeu(ospj(DATASET_DIR, 'duke/partitions.pkl'))
+    im_dir = ospj(DATASET_DIR, 'duke/images')
+    partition_file = ospj(DATASET_DIR, 'duke/partitions.pkl')
 
   elif name == 'combined':
     assert part in ['trainval'], \
       "Only trainval part of the combined dataset is available now."
-    im_dir = ospeu(ospj(DATASET_DIR, 'market1501_cuhk03_duke/trainval_images'))
-    partition_file = ospeu(ospj(DATASET_DIR, 'market1501_cuhk03_duke/partitions.pkl'))
-
+    im_dir = ospj(DATASET_DIR, 'market1501_cuhk03_duke/trainval_images') #ospeu(ospj(DATASET_DIR, 'market1501_cuhk03_duke/trainval_images'))
+    partition_file = ospj(DATASET_DIR, 'market1501_cuhk03_duke/partitions.pkl') #ospeu(ospj(DATASET_DIR, 'market1501_cuhk03_duke/partitions.pkl'))
+ 
   ##################
   # Create Dataset #
   ##################

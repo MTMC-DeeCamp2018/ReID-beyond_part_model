@@ -52,7 +52,7 @@ class Config(object):
     parser.add_argument('--batch_size', type=int, default=64)
 
     parser.add_argument('--log_to_file', type=str2bool, default=True)
-    parser.add_argument('--steps_per_log', type=int, default=5)
+    parser.add_argument('--steps_per_log', type=int, default=8)
     parser.add_argument('--epochs_per_val', type=int, default=1)
 
     parser.add_argument('--last_conv_stride', type=int, default=1, choices=[1, 2])
@@ -312,7 +312,7 @@ def main():
   test_sets = []
   test_set_names = []
   if cfg.dataset == 'combined':
-    for name in ['market1501', 'cuhk03', 'duke']:
+    for name in ['market1501', 'duke']: # remove 'cuhk03'
       cfg.test_set_kwargs['name'] = name
       test_sets.append(create_dataset(**cfg.test_set_kwargs))
       test_set_names.append(name)
