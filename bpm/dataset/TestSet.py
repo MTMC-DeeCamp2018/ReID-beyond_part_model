@@ -218,9 +218,9 @@ class TestSet(Dataset):
       with measure_time('Multi Query, Computing scores...', verbose=verbose):
         mq_mAP, mq_cmc_scores = compute_score(
           mq_g_dist,
-          query_ids=np.array(zip(*keys)[0]),
+          query_ids=np.array(list(zip(*keys))[0]),
           gallery_ids=ids[g_inds],
-          query_cams=np.array(zip(*keys)[1]),
+          query_cams=np.array(list(zip(*keys))[1]),
           gallery_cams=cams[g_inds]
         )
 
@@ -265,9 +265,9 @@ class TestSet(Dataset):
             verbose=verbose):
           mq_mAP, mq_cmc_scores = compute_score(
             re_r_mq_g_dist,
-            query_ids=np.array(zip(*keys)[0]),
+            query_ids=np.array(list(zip(*keys))[0]),
             gallery_ids=ids[g_inds],
-            query_cams=np.array(zip(*keys)[1]),
+            query_cams=np.array(list(zip(*keys))[1]),
             gallery_cams=cams[g_inds]
           )
 
