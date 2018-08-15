@@ -25,7 +25,7 @@ from bpm.utils.utils import set_devices
 # Arguments #
 #############
 
-sys_device_ids = ()
+sys_device_ids = (2,)
 TVT, TMO = set_devices(sys_device_ids)
 
 # image input
@@ -41,7 +41,7 @@ num_stripes = 6
 local_conv_out_channels = 256
 
 # weight file
-model_weight_file = "/Users/luzhoutao/study_abroad/7-DeeCamp/workspace/beyond-part-models/model_weights/ckpt.pth" #"/mnt/md1/lztao/deecamp/ReID-beyond_part_model/baseline_log/ckpt.pth"
+model_weight_file = "/mnt/md1/lztao/deecamp/ReID-beyond_part_model/baseline_log/ckpt.pth"
 
 
 
@@ -104,10 +104,8 @@ def start():
 
 def run(preprocessor, extractor, im_path):
     im = np.asarray(Image.open(im_path))
-    print(im.shape)
     # preprocessing
     im, _ = preprocessor(im)
-    print(im.shape)
     im = np.stack([im], axis=0)
     return extractor(im)
 
@@ -150,19 +148,19 @@ def run_video(preprocessor, extractor, video_path, bbox_path):
     return records
 
 if __name__ == '__main__':
-    '''im_dir = '../eval/people/s2c0/0' #'/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/people/s2c0/'
-    feat_dir = '/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/feats/s2c0'
+    '''im_dir = '/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/people/s1c0/8'
+    feat_dir = '/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/feats/s1c0/8'
 
     preprocessor, extractor = start()
     for im_name in os.listdir(im_dir):
         feat = run(preprocessor, extractor, os.path.join(im_dir, im_name))
-        input()
         np.save(os.path.join(feat_dir, im_name.split('.')[0]), feat)
         print(im_name, end='\r')'''
 
-    bbox_path = "/Users/luzhoutao/study_abroad/7-DeeCamp/workspace/Dataset/epfl/bboxes_yolo/bbox_1_c0.txt"
-    video_path = "/Users/luzhoutao/study_abroad/7-DeeCamp/workspace/Dataset/epfl/terrance_seq/terrace1-c0.avi"
-    bbox_feat_path = "/Users/luzhoutao/study_abroad/7-DeeCamp/workspace/Dataset/epfl/bbox_feats_yolo/bbox_feat_1_c0.npy"
+    #bbox_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bboxes_fstrcnn/bbox_1_c0.txt"
+    bbox_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bboxes_fstrcnn/terrace1-c0.txt"
+    video_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/terrace_seq/terrace1-c0.avi"
+    bbox_feat_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bbox_feats_fstrcnn/bbox_feat_1_c0.npy"
 
     preprocessor, extractor = start()
     bbox_feat = run_video(preprocessor, extractor, video_path, bbox_path)
