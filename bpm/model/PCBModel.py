@@ -50,12 +50,14 @@ class PCBModel(nn.Module):
     assert feat.size(2) % self.num_stripes == 0
     stripe_h = int(feat.size(2) / self.num_stripes)
     local_feat_list = []
+    output_feat_list = []
     logits_list = []
     for i in range(self.num_stripes):
       # shape [N, C, 1, 1]
       local_feat = F.avg_pool2d(
         feat[:, :, i * stripe_h: (i + 1) * stripe_h, :],
         (stripe_h, feat.size(-1)))
+      output_feat_list.append(local_feat)
       # shape [N, c, 1, 1]
       local_feat = self.local_conv_list[i](local_feat)
       # shape [N, c]
@@ -65,6 +67,6 @@ class PCBModel(nn.Module):
         logits_list.append(self.fc_list[i](local_feat))
 
     if hasattr(self, 'fc_list'):
-      return local_feat_list, logits_list
+      return output_feat_list, logits_list
 
-    return local_feat_list
+    return output_feat_list
