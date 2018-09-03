@@ -1,3 +1,9 @@
+```
+Our Improvement:
+1. Use multi-scale feature for low-resolution images;
+
+```
+
 # Beyond Part Models: Person Retrieval with Refined Part Pooling
 
 **Related Projects:** [Strong Triplet Loss Baseline](https://github.com/huanghoujing/person-reid-triplet-loss-baseline)
