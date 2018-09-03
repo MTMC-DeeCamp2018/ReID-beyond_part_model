@@ -25,7 +25,7 @@ from bpm.utils.utils import set_devices
 # Arguments #
 #############
 
-sys_device_ids = (2,)
+sys_device_ids = (0,)
 TVT, TMO = set_devices(sys_device_ids)
 
 # image input
@@ -41,7 +41,7 @@ num_stripes = 6
 local_conv_out_channels = 256
 
 # weight file
-model_weight_file = "/mnt/md1/lztao/deecamp/ReID-beyond_part_model/baseline_log/ckpt.pth"
+model_weight_file = "/mnt/md1/lztao/deecamp/ReID-beyond_part_model/log_multiscale/ckpt.pth"
 
 
 
@@ -67,11 +67,16 @@ class ExtractFeature(object):
       local_feat_list, logits_list = self.model(ims)
     except:
       local_feat_list = self.model(ims)
+    #for lf in local_feat_list:
+    #    print(lf.shape)
+    #input()
     feat = [lf.data.cpu().numpy() for lf in local_feat_list]
     feat = np.concatenate(feat, axis=1)
 
     # Restore the model to its old train/eval mode.
     self.model.train(old_train_eval_model)
+#    print(feat.shape)
+#    input()
     return feat
 
 
@@ -112,6 +117,7 @@ def run(preprocessor, extractor, im_path):
 def run_video(preprocessor, extractor, video_path, bbox_path):
     # read video
     cap = cv2.VideoCapture(video_path)
+    print(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fid, frame = 0, None
 
     records,count = [], 0
@@ -119,8 +125,12 @@ def run_video(preprocessor, extractor, video_path, bbox_path):
     with open(bbox_path, 'r') as f:
         line = f.readline()
         while line:
+#            if fid >=2147:
+#                break
+
             id, x, y, w, h, conf = line.strip().split()
             id, x, y, w, h, conf = int(id), float(x), float(y), float(w), float(h), float(conf)
+#            x, y, w, h = x-10, y-25, w+20, h+50
             x1, y1 = int(np.round(max(0, x))), int(np.round(max(0, y)))
             x2, y2 = int(np.round(max(0, x + w))), int(np.round(max(0, y + h)))
 
@@ -133,24 +143,27 @@ def run_video(preprocessor, extractor, video_path, bbox_path):
             im = np.stack([im], axis=0)
 
             feat = extractor(im)
-
             rec = np.zeros([6 + feat.shape[1]])
             rec[0], rec[1], rec[2], rec[3], rec[4], rec[5] = id, x, y, w, h, conf
-            rec[6:] = feat[0]
+            rec[6:] = feat[0,:]
 
             records.append(rec)
 
             count += 1
             line = f.readline()
-            print(str(count), end='\r')
+            print(fid, str(count), end='\r')
 
     records = np.stack(records, axis=0)
+    print(records.shape)
     return records
 
 if __name__ == '__main__':
 
-    '''im_dir = '/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/people/s1c0/8'
-    feat_dir = '/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/feats/s1c0/8'
+    import argparse
+    parser = argparse.ArgumentParser()
+
+    '''im_dir = '/mnt/md1/lztao/deecamp/Dataset/duke_query' #'/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/people/s1c0/0'
+    feat_dir = '/mnt/md1/lztao/deecamp/Dataset/duke_query_feats' #'/mnt/md1/lztao/deecamp/ReID-beyond_part_model/eval/feats_g/s1c0/0'
 
     preprocessor, extractor = start()
     for im_name in os.listdir(im_dir):
@@ -159,9 +172,16 @@ if __name__ == '__main__':
         print(im_name, end='\r')'''
 
     #bbox_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bboxes_fstrcnn/bbox_1_c0.txt"
-    bbox_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bboxes_fstrcnn/terrace1-c0.txt"
-    video_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/terrace_seq/terrace1-c0.avi"
-    bbox_feat_path = "/mnt/md1/lztao/deecamp/Dataset/epfl/bbox_feats_fstrcnn/bbox_feat_1_c0.npy"
+
+    parser.add_argument('--bbox_path', type=str, default="")
+    parser.add_argument('--video_path', type=str, default="")
+    parser.add_argument("--save_path", type=str, default="")
+
+    args = parser.parse_args()
+
+    bbox_path = args.bbox_path #"/mnt/md1/lztao/deecamp/Dataset/epfl/bboxes_yolo/bbox_1_c0.txt"
+    video_path = args.video_path #"/mnt/md1/lztao/deecamp/Dataset/epfl/terrace_seq/terrace1-c0.avi"
+    bbox_feat_path = args.save_path #"/mnt/md1/lztao/deecamp/Dataset/epfl/bbox_feats_yolo_pcb_g/bbox_feat_1_c0.npy"
 
     preprocessor, extractor = start()
     bbox_feat = run_video(preprocessor, extractor, video_path, bbox_path)

@@ -139,12 +139,16 @@ class ResNet(nn.Module):
     x = self.relu(x)
     x = self.maxpool(x)
 
+    out1 = x
     x = self.layer1(x)
+    out2 = x
     x = self.layer2(x)
+    out3 = x
     x = self.layer3(x)
+    out4 = x
     x = self.layer4(x)
 
-    return x
+    return x, [out1, out2, out3, out4]
 
 
 def remove_fc(state_dict):

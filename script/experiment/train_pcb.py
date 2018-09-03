@@ -312,7 +312,7 @@ def main():
   test_sets = []
   test_set_names = []
   if cfg.dataset == 'combined':
-    for name in ['market1501', 'duke']: # remove 'cuhk03'
+    for name in [ 'cuhk03']:
       cfg.test_set_kwargs['name'] = name
       test_sets.append(create_dataset(**cfg.test_set_kwargs))
       test_set_names.append(name)
@@ -374,6 +374,8 @@ def main():
       if cfg.model_weight_file != '':
         map_location = (lambda storage, loc: storage)
         sd = torch.load(cfg.model_weight_file, map_location=map_location)
+        if 'state_dicts' in sd:
+            sd = sd['state_dicts'][0]
         load_state_dict(model, sd)
         print('Loaded model weights from {}'.format(cfg.model_weight_file))
       else:
